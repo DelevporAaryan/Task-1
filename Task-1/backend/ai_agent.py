@@ -4,6 +4,7 @@ GROQ_API_KEY = "YOUR_GROQ_API_KEY"
 
 def call_llm(prompt):
     url = "https://api.groq.com/openai/v1/chat/completions"
+
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
