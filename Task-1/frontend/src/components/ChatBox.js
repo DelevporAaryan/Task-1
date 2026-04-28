@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function ChatBox() {
-  const [text, setText] = useState("");
+  const [data,setData]=useState(null);
+  const [editable,setEditable]=useState(null);
 
   const send = async () => {
     await axios.post("http://127.0.0.1:8000/log-interaction", { text });
