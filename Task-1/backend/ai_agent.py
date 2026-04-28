@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 GROQ_API_KEY = "YOUR_GROQ_API_KEY"
 
@@ -8,25 +8,41 @@ def call_llm(prompt):
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
+
     data = {
         "model": "gemma2-9b-it",
-        "messages": [{"role": "user", "content": prompt}]
-    }
-    response = requests.post(url, headers=headers, json=data)
-    return response.json()["choices"][0]["message"]["content"]
-
-def extract_data(text):
-    prompt = f"Extract doctor, product, outcome from: {text} in JSON"
-    result = call_llm(prompt)
-    return {
-        "doctor": "Dr. AI",
-        "product": "AI Product",
-        "outcome": "Interested",
-        "notes": text
+        "messages": [
+            {"role": "system", "content": "Extract structured CRM data"},
+            {"role": "user", "content": prompt}
+        ]
     }
 
-def suggest_next():
+    res = requests.post(url, headers=headers, json=data)
+    return res.json()["choices"][0]["message"]["content"]
+
+
+def log_tool(text):
+    prompt = f"""
+    Extract JSON with keys:
+    doctor, product, outcome, summary
+    from: {text}
+    """
+
+    try:
+        response = call_llm(prompt)
+        return json.loads(response)
+    except:
+        return {
+            "doctor": "Unknown",
+            "product": "Unknown",
+            "outcome": "Unknown",
+            "summary": text
+        }
+
+
+def suggest_tool():
     return "Follow up in 2 days"
 
-def generate_summary(data):
-    return f"Total {len(data)} interactions logged"
+
+def summary_tool(db):
+    return f"{len(db)} interactions logged"
