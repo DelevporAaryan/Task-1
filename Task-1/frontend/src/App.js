@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import ChatBox from "./components/ChatBox";
-import InteractionList from "./components/InteractionList";
+import FormBox from "./components/FormBox";
+import Table from "./components/Table";
 
 function App() {
+  const [mode, setMode] = useState("chat");
+
   return (
     <div style={{ padding: 20 }}>
-      <h1>AI CRM HCP Module</h1>
-      <ChatBox />
-      <InteractionList />
+      <h1>AI CRM Dashboard</h1>
+
+      <button onClick={() => setMode("chat")}>Chat</button>
+      <button onClick={() => setMode("form")}>Form</button>
+
+      {mode === "chat" ? <ChatBox /> : <FormBox />}
+
+      <Table />
     </div>
   );
 }
