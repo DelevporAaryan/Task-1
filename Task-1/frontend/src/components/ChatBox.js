@@ -2,29 +2,74 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function ChatBox() {
-  const [data,setData]=useState(null);
-  const [editable,setEditable]=useState(null);
+  const [text, setText] = useState("");
+  const [editable, setEditable] = useState(null);
 
+  // 🔥 Step 1: AI extraction
   const send = async () => {
-    await axios.post("http://127.0.0.1:8000/log-interaction", { text });
-    alert("Interaction Logged!");
+    const res = await axios.post("http://127.0.0.1:8000/log-interaction", {
+      text,
+    });
+
+    setEditable(res.data);
+  };
+
+  // 🔥 Step 2: Confirm save
+  const save = async () => {
+    await axios.post("http://127.0.0.1:8000/log-interaction", {
+      text: editable.summary,
+    });
+
+    alert("Saved Successfully!");
+    setEditable(null);
+    setText("");
   };
 
   return (
     <div>
       <h3>Chat Interface</h3>
-      <textarea onChange={(e) => setText(e.target.value)} />
+
+      <textarea
+        placeholder="Type interaction..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+
       <br />
       <button onClick={send}>Send</button>
 
-  {data && (
-  <div style={{ marginTop: "10px", border: "1px solid #ccc", padding: "10px" }}>
-    <h4>Extracted Data</h4>
-    <p><b>Doctor:</b> {data.doctor}</p>
-    <p><b>Product:</b> {data.product}</p>
-    <p><b>Outcome:</b> {data.outcome}</p>
-  </div>
-)}
+      {editable && (
+        <div style={{ marginTop: "10px", border: "1px solid #ccc", padding: "10px" }}>
+          <h4>Review & Edit</h4>
+
+          <p>Doctor:</p>
+          <input
+            value={editable.doctor || ""}
+            onChange={(e) =>
+              setEditable({ ...editable, doctor: e.target.value })
+            }
+          />
+
+          <p>Product:</p>
+          <input
+            value={editable.product || ""}
+            onChange={(e) =>
+              setEditable({ ...editable, product: e.target.value })
+            }
+          />
+
+          <p>Outcome:</p>
+          <input
+            value={editable.outcome || ""}
+            onChange={(e) =>
+              setEditable({ ...editable, outcome: e.target.value })
+            }
+          />
+
+          <br /><br />
+          <button onClick={save}>✅ Confirm & Save</button>
+        </div>
+      )}
     </div>
   );
 }
