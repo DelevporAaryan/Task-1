@@ -15,6 +15,7 @@ function App() {
 
       {mode === "chat" ? <ChatBox /> : <FormBox />}
 
+      <hr />
       <Table />
     </div>
   );
